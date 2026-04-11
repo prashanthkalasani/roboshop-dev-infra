@@ -12,7 +12,7 @@ variable "environment" {
 
 variable "vpc_tags" {
     default = {
-        Purpose = "vpc-module-test"
+        Purpose = "Roboshop VPC"
         DontDelete = "true"
     }
 }
