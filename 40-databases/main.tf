@@ -43,12 +43,12 @@ resource "aws_instance" "redis" {
     ami = local.ami_id
     instance_type = "t3.micro"
     vpc_security_group_ids = [local.redis_sg_id]
-    subnet_id = local.database_subnet_ids
+    subnet_id = local.database_subnet_id
     
     tags = merge (
         local.common_tags,
         {
-            Name = "${local.common_name_suffix}-redis" # roboshop-dev-mongodb
+            Name = "${local.common_name_suffix}-redis" # roboshop-dev-redis
         }
     )
 }
@@ -65,7 +65,7 @@ resource "terraform_data" "redis" {
     host     = aws_instance.redis.private_ip
   }
 
-  # terraform copies this file to redis server
+  # terraform copies this file to mongodb server
   provisioner "file" {
     source = "bootstrap.sh"
     destination = "/tmp/bootstrap.sh"
@@ -83,12 +83,12 @@ resource "aws_instance" "rabbitmq" {
     ami = local.ami_id
     instance_type = "t3.micro"
     vpc_security_group_ids = [local.rabbitmq_sg_id]
-    subnet_id = local.database_subnet_ids
+    subnet_id = local.database_subnet_id
     
     tags = merge (
         local.common_tags,
         {
-            Name = "${local.common_name_suffix}-rabbitmq" # roboshop-dev-mongodb
+            Name = "${local.common_name_suffix}-rabbitmq" # roboshop-dev-rabbitmq
         }
     )
 }
@@ -105,7 +105,7 @@ resource "terraform_data" "rabbitmq" {
     host     = aws_instance.rabbitmq.private_ip
   }
 
-  # terraform copies this file to rabbitmq server
+  # terraform copies this file to mongodb server
   provisioner "file" {
     source = "bootstrap.sh"
     destination = "/tmp/bootstrap.sh"
