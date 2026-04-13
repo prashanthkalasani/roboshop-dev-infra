@@ -13,20 +13,20 @@ resource "aws_instance" "mongodb" {
 }
 
 resource "terraform_data" "mongodb" {
-    triggers_replace = [
-        aws_instance.mongodb.id
+  triggers_replace = [
+    aws_instance.mongodb.id
+  ]
+  
+  connection {
+    type     = "ssh"
+    user     = "ec2-user"
+    password = "DevOps321"
+    host     = aws_instance.mongodb.private_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+        "echo Hello World"
     ]
-
-    connection {
-      type     = "ssh"
-      user     = "ec2-user"
-      password = "DevOps321"
-      host     = aws_instance.mongodb.private_ip
-    }
-
-    provisioner "remote_exec" {
-        inline = [
-            "echo Hello World"
-        ]
-    }
+  }
 }
