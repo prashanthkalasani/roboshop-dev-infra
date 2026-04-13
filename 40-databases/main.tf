@@ -39,6 +39,20 @@ resource "terraform_data" "mongodb" {
   }
 }
 
+resource "aws_instance" "redis" {
+    ami = local.ami_id
+    instance_type = "t3.micro"
+    vpc_security_group_ids = [local.redis_sg_id]
+    subnet_id = local.database_subnet_ids
+    
+    tags = merge (
+        local.common_tags,
+        {
+            Name = "${local.common_name_suffix}-redis" # roboshop-dev-redis
+        }
+    )
+}
+
 resource "terraform_data" "redis" {
   triggers_replace = [
     aws_instance.redis.id
@@ -51,7 +65,7 @@ resource "terraform_data" "redis" {
     host     = aws_instance.redis.private_ip
   }
 
-  # terraform copies this file to mongodb server
+  # terraform copies this file to redis server
   provisioner "file" {
     source = "bootstrap.sh"
     destination = "/tmp/bootstrap.sh"
@@ -63,6 +77,20 @@ resource "terraform_data" "redis" {
         "sudo sh /tmp/bootstrap.sh redis"
     ]
   }
+}
+
+resource "aws_instance" "rabbitmq" {
+    ami = local.ami_id
+    instance_type = "t3.micro"
+    vpc_security_group_ids = [local.rabbitmq_sg_id]
+    subnet_id = local.database_subnet_ids
+    
+    tags = merge (
+        local.common_tags,
+        {
+            Name = "${local.common_name_suffix}-rabbitmq" # roboshop-dev-rabbitmq
+        }
+    )
 }
 
 resource "terraform_data" "rabbitmq" {
